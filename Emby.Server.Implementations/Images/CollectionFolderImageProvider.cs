@@ -48,7 +48,7 @@ namespace Emby.Server.Implementations.Images
             }
             else if (string.Equals(viewType, CollectionType.Books, StringComparison.Ordinal))
             {
-                includeItemTypes = new[] { BaseItemKind.Book, BaseItemKind.AudioBook };
+                includeItemTypes = new[] { BaseItemKind.Book, BaseItemKind.NewAudioBook };
             }
             else if (string.Equals(viewType, CollectionType.BoxSets, StringComparison.Ordinal))
             {

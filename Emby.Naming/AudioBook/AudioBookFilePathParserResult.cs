@@ -1,4 +1,4 @@
-namespace Emby.Naming.AudioBook
+﻿namespace Emby.Naming.AudioBook
 {
     /// <summary>
     /// Data object for passing result of audiobook part/chapter extraction.

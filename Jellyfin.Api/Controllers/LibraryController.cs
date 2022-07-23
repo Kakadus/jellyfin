@@ -918,7 +918,7 @@ namespace Jellyfin.Api.Controllers
                 CollectionType.Playlists => new[] { "Playlist" },
                 CollectionType.Movies => new[] { "Movie" },
                 CollectionType.TvShows => new[] { "Series", "Season", "Episode" },
-                CollectionType.Books => new[] { "Book" },
+                CollectionType.Books => new[] { "MusicArtist", "MusicAlbum", "Audio", "MusicVideo" },
                 CollectionType.Music => new[] { "MusicArtist", "MusicAlbum", "Audio", "MusicVideo" },
                 CollectionType.HomeVideos => new[] { "Video", "Photo" },
                 CollectionType.Photos => new[] { "Video", "Photo" },

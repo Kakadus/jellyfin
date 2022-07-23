@@ -22,7 +22,6 @@ namespace Jellyfin.Providers.Tests.MediaInfo
     public class EmbeddedImageProviderTests
     {
         [Theory]
-        [InlineData(typeof(AudioBook))]
         [InlineData(typeof(BoxSet))]
         [InlineData(typeof(Series))]
         [InlineData(typeof(Season))]

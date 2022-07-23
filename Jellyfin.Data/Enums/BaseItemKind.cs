@@ -19,11 +19,6 @@
         Audio,
 
         /// <summary>
-        /// Item is audio book.
-        /// </summary>
-        AudioBook,
-
-        /// <summary>
         /// Item is base plugin folder.
         /// </summary>
         BasePluginFolder,
@@ -32,6 +27,11 @@
         /// Item is book.
         /// </summary>
         Book,
+
+        /// <summary>
+        /// Item is a chapter of a book.
+        /// </summary>
+        Chapter,
 
         /// <summary>
         /// Item is box set.
@@ -122,6 +122,11 @@
         /// Item is photo album.
         /// </summary>
         PhotoAlbum,
+
+        /// <summary>
+        /// Item is a audio book.
+        /// </summary>
+        NewAudioBook,
 
         /// <summary>
         /// Item is playlist.

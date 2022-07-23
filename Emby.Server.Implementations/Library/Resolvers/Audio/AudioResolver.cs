@@ -7,10 +7,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Emby.Naming.Audio;
-using Emby.Naming.AudioBook;
 using Emby.Naming.Common;
 using Emby.Naming.Video;
 using MediaBrowser.Controller.Entities;
+using MediaBrowser.Controller.Entities.Audio;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Controller.Resolvers;
@@ -22,7 +22,7 @@ namespace Emby.Server.Implementations.Library.Resolvers.Audio
     /// <summary>
     /// Class AudioResolver.
     /// </summary>
-    public class AudioResolver : ItemResolver<MediaBrowser.Controller.Entities.Audio.Audio>, IMultiItemResolver
+    public class AudioResolver : ItemResolver<MediaBrowser.Controller.Entities.Audio.Audio>
     {
         private readonly NamingOptions _namingOptions;
 
@@ -37,38 +37,6 @@ namespace Emby.Server.Implementations.Library.Resolvers.Audio
         /// <value>The priority.</value>
         public override ResolverPriority Priority => ResolverPriority.Fifth;
 
-        public MultiItemResolverResult ResolveMultiple(
-            Folder parent,
-            List<FileSystemMetadata> files,
-            string collectionType,
-            IDirectoryService directoryService)
-        {
-            var result = ResolveMultipleInternal(parent, files, collectionType);
-
-            if (result != null)
-            {
-                foreach (var item in result.Items)
-                {
-                    SetInitialItemValues((MediaBrowser.Controller.Entities.Audio.Audio)item, null);
-                }
-            }
-
-            return result;
-        }
-
-        private MultiItemResolverResult ResolveMultipleInternal(
-            Folder parent,
-            List<FileSystemMetadata> files,
-            string collectionType)
-        {
-            if (string.Equals(collectionType, CollectionType.Books, StringComparison.OrdinalIgnoreCase))
-            {
-                return ResolveMultipleAudio(parent, files, true);
-            }
-
-            return null;
-        }
-
         /// <summary>
         /// Resolves the specified args.
         /// </summary>
@@ -80,16 +48,9 @@ namespace Emby.Server.Implementations.Library.Resolvers.Audio
 
             var collectionType = args.GetCollectionType();
 
-            var isBooksCollectionType = string.Equals(collectionType, CollectionType.Books, StringComparison.OrdinalIgnoreCase);
-
             if (args.IsDirectory)
             {
-                if (!isBooksCollectionType)
-                {
-                    return null;
-                }
-
-                return FindAudioBook(args, false);
+                return null;
             }
 
             if (AudioFileParser.IsAudioFile(args.Path, _namingOptions))
@@ -113,7 +74,7 @@ namespace Emby.Server.Implementations.Library.Resolvers.Audio
                 MediaBrowser.Controller.Entities.Audio.Audio item = null;
 
                 var isMusicCollectionType = string.Equals(collectionType, CollectionType.Music, StringComparison.OrdinalIgnoreCase);
-
+                var isAudioBookCollectionType = string.Equals(collectionType, CollectionType.Books, StringComparison.OrdinalIgnoreCase);
                 // Use regular audio type for mixed libraries, owned items and music
                 if (isMixedCollectionType ||
                     args.Parent == null ||
@@ -121,9 +82,9 @@ namespace Emby.Server.Implementations.Library.Resolvers.Audio
                 {
                     item = new MediaBrowser.Controller.Entities.Audio.Audio();
                 }
-                else if (isBooksCollectionType)
+                else if (isAudioBookCollectionType)
                 {
-                    item = new AudioBook();
+                    item = new Chapter();
                 }
 
                 if (item != null)
@@ -139,102 +100,6 @@ namespace Emby.Server.Implementations.Library.Resolvers.Audio
             return null;
         }
 
-        private AudioBook FindAudioBook(ItemResolveArgs args, bool parseName)
-        {
-            // TODO: Allow GetMultiDiscMovie in here
-            var result = ResolveMultipleAudio(args.Parent, args.GetActualFileSystemChildren(), parseName);
 
-            if (result == null || result.Items.Count != 1 || result.Items[0] is not AudioBook item)
-            {
-                return null;
-            }
-
-            // If we were supporting this we'd be checking filesFromOtherItems
-            item.IsInMixedFolder = false;
-            item.Name = Path.GetFileName(item.ContainingFolderPath);
-            return item;
-        }
-
-        private MultiItemResolverResult ResolveMultipleAudio(Folder parent, IEnumerable<FileSystemMetadata> fileSystemEntries, bool parseName)
-        {
-            var files = new List<FileSystemMetadata>();
-            var items = new List<BaseItem>();
-            var leftOver = new List<FileSystemMetadata>();
-
-            // Loop through each child file/folder and see if we find a video
-            foreach (var child in fileSystemEntries)
-            {
-                if (child.IsDirectory)
-                {
-                    leftOver.Add(child);
-                }
-                else
-                {
-                    files.Add(child);
-                }
-            }
-
-            var resolver = new AudioBookListResolver(_namingOptions);
-            var resolverResult = resolver.Resolve(files).ToList();
-
-            var result = new MultiItemResolverResult
-            {
-                ExtraFiles = leftOver,
-                Items = items
-            };
-
-            var isInMixedFolder = resolverResult.Count > 1 || (parent != null && parent.IsTopParent);
-
-            foreach (var resolvedItem in resolverResult)
-            {
-                if (resolvedItem.Files.Count > 1)
-                {
-                    // For now, until we sort out naming for multi-part books
-                    continue;
-                }
-
-                if (resolvedItem.Files.Count == 0)
-                {
-                    continue;
-                }
-
-                var firstMedia = resolvedItem.Files[0];
-
-                var libraryItem = new AudioBook
-                {
-                    Path = firstMedia.Path,
-                    IsInMixedFolder = isInMixedFolder,
-                    ProductionYear = resolvedItem.Year,
-                    Name = parseName ?
-                        resolvedItem.Name :
-                        Path.GetFileNameWithoutExtension(firstMedia.Path),
-                    // AdditionalParts = resolvedItem.Files.Skip(1).Select(i => i.Path).ToArray(),
-                    // LocalAlternateVersions = resolvedItem.AlternateVersions.Select(i => i.Path).ToArray()
-                };
-
-                result.Items.Add(libraryItem);
-            }
-
-            result.ExtraFiles.AddRange(files.Where(i => !ContainsFile(resolverResult, i)));
-
-            return result;
-        }
-
-        private static bool ContainsFile(IEnumerable<AudioBookInfo> result, FileSystemMetadata file)
-        {
-            return result.Any(i => ContainsFile(i, file));
-        }
-
-        private static bool ContainsFile(AudioBookInfo result, FileSystemMetadata file)
-        {
-            return result.Files.Any(i => ContainsFile(i, file)) ||
-                result.AlternateVersions.Any(i => ContainsFile(i, file)) ||
-                result.Extras.Any(i => ContainsFile(i, file));
-        }
-
-        private static bool ContainsFile(AudioBookFileInfo result, FileSystemMetadata file)
-        {
-            return string.Equals(result.Path, file.FullName, StringComparison.OrdinalIgnoreCase);
-        }
     }
 }

@@ -991,9 +991,7 @@ namespace Emby.Server.Implementations.Channels
             }
             else if (info.MediaType == ChannelMediaType.Audio)
             {
-                item = info.ContentType == ChannelMediaContentType.Podcast
-                    ? GetItemById<AudioBook>(info.Id, channelProvider.Name, out isNew)
-                    : GetItemById<Audio>(info.Id, channelProvider.Name, out isNew);
+                item = GetItemById<Audio>(info.Id, channelProvider.Name, out isNew);
             }
             else
             {

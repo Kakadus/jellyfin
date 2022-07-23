@@ -61,7 +61,7 @@ namespace MediaBrowser.Controller.Entities.Audio
         /// </summary>
         /// <value>The tracks.</value>
         [JsonIgnore]
-        public IEnumerable<Audio> Tracks => GetRecursiveChildren(i => i is Audio).Cast<Audio>();
+        public virtual IEnumerable<Audio> Tracks => GetRecursiveChildren(i => i is Audio).Cast<Audio>();
 
         public MusicArtist GetMusicArtist(DtoOptions options)
         {

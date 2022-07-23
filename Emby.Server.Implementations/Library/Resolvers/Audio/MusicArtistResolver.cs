@@ -59,7 +59,7 @@ namespace Emby.Server.Implementations.Library.Resolvers.Audio
 
             var collectionType = args.GetCollectionType();
 
-            var isMusicMediaFolder = string.Equals(collectionType, CollectionType.Music, StringComparison.OrdinalIgnoreCase);
+            var isMusicMediaFolder = string.Equals(collectionType, CollectionType.Music, StringComparison.OrdinalIgnoreCase) || string.Equals(collectionType, CollectionType.Books, StringComparison.OrdinalIgnoreCase);
 
             // If there's a collection type and it's not music, it can't be a series
             if (!isMusicMediaFolder)

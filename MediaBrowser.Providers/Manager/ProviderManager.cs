@@ -542,7 +542,6 @@ namespace MediaBrowser.Providers.Manager
                 GetPluginSummary<MusicAlbum>(),
                 GetPluginSummary<MusicArtist>(),
                 GetPluginSummary<Audio>(),
-                GetPluginSummary<AudioBook>(),
                 GetPluginSummary<Studio>(),
                 GetPluginSummary<MusicVideo>(),
                 GetPluginSummary<Video>()

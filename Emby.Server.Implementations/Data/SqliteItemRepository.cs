@@ -235,7 +235,6 @@ namespace Emby.Server.Implementations.Data
         private static readonly BaseItemKind[] _seriesTypes = new[]
         {
             BaseItemKind.Book,
-            BaseItemKind.AudioBook,
             BaseItemKind.Episode,
             BaseItemKind.Season
         };
@@ -252,14 +251,13 @@ namespace Emby.Server.Implementations.Data
             BaseItemKind.Audio,
             BaseItemKind.MusicAlbum,
             BaseItemKind.MusicVideo,
-            BaseItemKind.AudioBook
+            BaseItemKind.NewAudioBook
         };
 
         private static readonly Dictionary<BaseItemKind, string> _baseItemKindNames = new()
         {
             { BaseItemKind.AggregateFolder, typeof(AggregateFolder).FullName },
             { BaseItemKind.Audio, typeof(Audio).FullName },
-            { BaseItemKind.AudioBook, typeof(AudioBook).FullName },
             { BaseItemKind.BasePluginFolder, typeof(BasePluginFolder).FullName },
             { BaseItemKind.Book, typeof(Book).FullName },
             { BaseItemKind.BoxSet, typeof(BoxSet).FullName },
@@ -272,6 +270,7 @@ namespace Emby.Server.Implementations.Data
             { BaseItemKind.LiveTvChannel, typeof(LiveTvChannel).FullName },
             { BaseItemKind.LiveTvProgram, typeof(LiveTvProgram).FullName },
             { BaseItemKind.MusicAlbum, typeof(MusicAlbum).FullName },
+            { BaseItemKind.NewAudioBook, typeof(NewAudioBook).FullName },
             { BaseItemKind.MusicArtist, typeof(MusicArtist).FullName },
             { BaseItemKind.MusicGenre, typeof(MusicGenre).FullName },
             { BaseItemKind.MusicVideo, typeof(MusicVideo).FullName },
@@ -1389,15 +1388,15 @@ namespace Emby.Server.Implementations.Data
             {
                 return false;
             }
-            else if (type == typeof(AudioBook))
-            {
-                return false;
-            }
             else if (type == typeof(Audio))
             {
                 return false;
             }
             else if (type == typeof(MusicAlbum))
+            {
+                return false;
+            }
+            else if (type == typeof(NewAudioBook))
             {
                 return false;
             }

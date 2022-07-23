@@ -131,8 +131,7 @@ namespace Jellyfin.Api.Controllers
 
             QueryResult<(BaseItem, ItemCounts)> result;
             if (parentItem is ICollectionFolder parentCollectionFolder
-                && (string.Equals(parentCollectionFolder.CollectionType, CollectionType.Music, StringComparison.Ordinal)
-                || string.Equals(parentCollectionFolder.CollectionType, CollectionType.MusicVideos, StringComparison.Ordinal)))
+                && new[] { CollectionType.Music, CollectionType.Books, CollectionType.MusicVideos }.Contains(parentCollectionFolder.CollectionType, StringComparer.OrdinalIgnoreCase))
             {
                 result = _libraryManager.GetMusicGenres(query);
             }

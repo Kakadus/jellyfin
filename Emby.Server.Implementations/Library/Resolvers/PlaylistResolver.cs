@@ -22,7 +22,8 @@ namespace Emby.Server.Implementations.Library.Resolvers
         private string[] _musicPlaylistCollectionTypes =
         {
             string.Empty,
-            CollectionType.Music
+            CollectionType.Music,
+            CollectionType.Books
         };
 
         /// <inheritdoc/>

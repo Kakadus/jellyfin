@@ -1,4 +1,4 @@
-namespace Emby.Naming.AudioBook
+﻿namespace Emby.Naming.AudioBook
 {
     /// <summary>
     /// Data object used to pass result of name and year parsing.
